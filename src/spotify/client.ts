@@ -38,7 +38,8 @@ export class SpotifyClient {
         `Spotify API error: ${res.status} ${res.statusText}`,
       );
     }
-    return res.json() as Promise<T>;
+    const text = await res.text();
+    return (text ? JSON.parse(text) : undefined) as T;
   }
 
   async getTopArtists(

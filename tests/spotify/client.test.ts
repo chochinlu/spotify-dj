@@ -15,11 +15,12 @@ describe("SpotifyClient", () => {
   it("getTopArtists returns artists with genres", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({
-        items: [
-          { id: "a1", name: "Artist", genres: ["pop", "rock"], images: [] },
-        ],
-      }),
+      text: async () =>
+        JSON.stringify({
+          items: [
+            { id: "a1", name: "Artist", genres: ["pop", "rock"], images: [] },
+          ],
+        }),
     });
     const artists = await client.getTopArtists("medium_term");
     expect(artists[0].genres).toEqual(["pop", "rock"]);
@@ -34,10 +35,20 @@ describe("SpotifyClient", () => {
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ items: [] }),
+        text: async () => JSON.stringify({ items: [] }),
       });
     const artists = await client.getTopArtists("medium_term");
     expect(artists).toEqual([]);
     expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("handles empty 200 response (e.g. unfollow playlist)", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      text: async () => "",
+    });
+    await expect(
+      client.unfollowPlaylist("abc123"),
+    ).resolves.toBeUndefined();
   });
 });
