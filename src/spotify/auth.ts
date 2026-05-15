@@ -3,7 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 
 const REDIRECT_URI = "http://127.0.0.1:8888/callback";
-const TOKEN_PATH = path.resolve("data", "tokens.json");
+const TOKEN_PATH = path.resolve(__dirname, "..", "..", "data", "tokens.json");
 
 export class AuthExpiredError extends Error {
   constructor() {
