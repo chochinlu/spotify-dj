@@ -1,19 +1,22 @@
 const BASE_URL = "https://api.spotify.com/v1";
 
+export type TokenProvider = () => Promise<string>;
+
 export class SpotifyClient {
-  constructor(private accessToken: string) {}
+  constructor(private getToken: TokenProvider) {}
 
   private async request<T>(
     path: string,
     options?: RequestInit,
     retries = 3,
   ): Promise<T> {
+    const accessToken = await this.getToken();
     let res: Response;
     try {
       res = await fetch(`${BASE_URL}${path}`, {
         ...options,
         headers: {
-          Authorization: `Bearer ${this.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           ...options?.headers,
         },
       });

@@ -23,12 +23,10 @@ const server = new McpServer({ name: "spotify-dj", version: "1.0.0" });
 
 async function main() {
   const db = getDb();
-  let accessToken: string;
+  const clientId = process.env.SPOTIFY_CLIENT_ID!;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET!;
   try {
-    accessToken = await getAccessToken(
-      process.env.SPOTIFY_CLIENT_ID!,
-      process.env.SPOTIFY_CLIENT_SECRET!,
-    );
+    await getAccessToken(clientId, clientSecret);
   } catch (err) {
     if (err instanceof AuthExpiredError) {
       console.error(
@@ -38,7 +36,7 @@ async function main() {
     }
     throw err;
   }
-  const client = new SpotifyClient(accessToken);
+  const client = new SpotifyClient(() => getAccessToken(clientId, clientSecret));
   const apiAvailability = await probeApiAvailability(client);
 
   // --- Tool registrations ---

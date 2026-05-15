@@ -8,7 +8,7 @@ describe("SpotifyClient", () => {
   let client: SpotifyClient;
 
   beforeEach(() => {
-    client = new SpotifyClient("fake-token");
+    client = new SpotifyClient(async () => "fake-token");
     mockFetch.mockReset();
   });
 
